@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "RNDApp",
-    "slug": "RNDApp",
+    "name": "rndapp",
+    "slug": "rndapp",
     "version": "1.0.0",
-    "scheme":"RNDApp",
+    "scheme":"rndapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {

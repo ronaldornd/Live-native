@@ -10,24 +10,25 @@ import { styles } from './styles';
 export function SendMessageForm(){
     const [message, setMessage] = useState('');
     const [sendingMessage, setSendingMessage] = useState(false)
-  async function handleMessageSubmit() {
-    const messageFormatted = message.trim();
-    await api.post('/messages', {message: messageFormatted});
+      async function handleMessageSubmit() {
+        const messageFormatted = message.trim();
+        if(messageFormatted.length>0){
+        setSendingMessage(true);
+        await api.post('/messages', {message: messageFormatted});
 
-    setMessage('');
-    Keyboard.dismiss();
-    setSendingMessage(true);
-    Alert.alert('Mensagem enviada!')
-
-    if(messageFormatted.length>0){
-      setSendingMessage(false)
-    }else{
-      alert("Digite algo! duh")
-    }
-  }
+        setMessage('');
+        Keyboard.dismiss();
+        
+        Alert.alert('Mensagem enviada!')
+          setSendingMessage(false)
+        }else{
+          alert("Digite algo! duh")
+        }
+      }
   return (
-    <View>
+    <View style={styles.container}>
         <TextInput
+        
             placeholder="Insira seu recado aqui!"
             placeholderTextColor={COLORS.GRAY_PRIMARY}
             multiline

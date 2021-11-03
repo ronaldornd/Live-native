@@ -6,8 +6,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CLIENT_ID = '3be645c2eb5137e94147';
 const SCOPE = 'read:user';
-const USER_STORAGE = '@live:user';
-const TOKEN_STORAGE = '@live:token';
+const USER_STORAGE = '@tokenRND:user';
+const TOKEN_STORAGE = '@tokenRND:token';
 
 type User = {
     id: string;
@@ -40,21 +40,21 @@ type AuthotizationResponse ={
 export const AuthContext = createContext({} as AuthContextData)
 
 function AuthProvider({children}: AuthProviderProps){
-    const [ isSigningIn, setIsSigningIn ] = useState(false);
+    const [ isSigningIn, setIsSigningIn ] = useState(true);
     const [user, setUser] = useState<User | null>(null)
     async function signIn(){
     try {
             setIsSigningIn(true);
-            const authUrl = `https://github.com/login/oauth/authorize?client_id=3be645c2eb5137e94147&scope=${SCOPE}`;
+            const authUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${SCOPE}`;
             const authSessionResponse = await AuthSessions.startAsync({ authUrl }) as AuthotizationResponse;0
-        
+            
             if(authSessionResponse.type === 'success' && authSessionResponse.params.error !== 'access_denied'){
-                const authResponse = await api.post('/authenticate/app', { code: authSessionResponse.params.code});
+                const authResponse = await api.post('authenticate/app', { code: authSessionResponse.params.code});
                 const { user, token} = authResponse.data as AuthResponse;
                 console.log(authResponse.data)
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
                 await AsyncStorage.setItem(USER_STORAGE, JSON.stringify(user))
-                await AsyncStorage.setItem(TOKEN_STORAGE, JSON.stringify(token))
+                await AsyncStorage.setItem(TOKEN_STORAGE, token)
                 setUser(user)
             }
         } catch (error) {
@@ -80,6 +80,7 @@ function AuthProvider({children}: AuthProviderProps){
             }
             setIsSigningIn(false);
         }
+        loadUserStorageData();
     }, [])
     return(
         <AuthContext.Provider value={{

@@ -5,7 +5,7 @@ import {Message, MessageProps} from '../Message';
 import { api } from '../../services/api';
 import { io } from 'socket.io-client';
 
-let messagesQueue: MessageProps[] =[]
+let messagesQueue: MessageProps[] =[];
 const socket = io(String(api.defaults.baseURL));
 socket.on('new_message', (newMessage) =>{
   messagesQueue.push(newMessage);
@@ -24,13 +24,11 @@ export function MessageList(){
 useEffect(() => {
   const timer = setInterval(() => {
     if(messagesQueue.length > 0){
-     setCurrentMessages(prevState => [messagesQueue[0],messagesQueue[1],messagesQueue[2]]);
+     setCurrentMessages(prevState => [messagesQueue[0],prevState[0],prevState[1]]);
      messagesQueue.shift();
     }
-  })
-  return () => {
-    clearInterval(timer);
-  }
+  }, 3000)
+  return () => clearInterval(timer);
 }, [])
 
   return (
@@ -38,7 +36,7 @@ useEffect(() => {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps='never'
     >
-        {currentMessages.map((message) => <Message key={message.id} data={message}/>)}
+        {currentMessages.map((message, id) => <Message key={id} data={message}/>)}
        
     </ScrollView>
   );
